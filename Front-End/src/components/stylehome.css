@@ -1,0 +1,177 @@
+html,body{
+    margin:0;
+    padding:0;
+    height:100%;
+}
+
+
+.homeContainer{
+    background-image: url("../images/heroimage2.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-color: black;
+    height: 800px;
+    width: 100%;
+    position: relative;
+}
+.header{
+    background-color: black;
+    height:80px;
+    width:100%;
+    opacity: 0.9;
+    position: relative;
+}
+
+#sticky{
+    position: sticky;
+    top: 0;
+    
+}
+
+
+#ulHome{
+    list-style-type: none;
+    margin: 0;
+    overflow: hidden;
+    
+}
+
+
+
+
+li img{
+    padding-left: 100px;
+}
+
+li h3{
+    color:white;
+    padding-left: 120px;
+}
+
+
+.links,li.heading{
+    color: white;
+    padding: 14px 16px;
+    opacity: 1;
+    text-align: left;  
+}
+
+.leftSide{
+    margin: 0;
+    position:absolute;
+    float:left;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    
+}
+.rightSide{
+    padding-top: 70px;
+    float:right;
+    position: relative;
+    margin: 0;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+ 
+
+
+
+a:link{
+    text-decoration: none;
+}
+
+a:hover{
+    color: green;
+}
+
+.containerBody{
+    align-content: center;
+    padding-top: 100px;
+    text-decoration-color: white;
+}
+
+.containerBody h1,.containerBody h2{
+    color: white;
+    text-align: center;
+}
+
+.containerBody h1{
+    font-size: 80px;
+}
+
+
+.getStarted{
+    background-color: #130106;
+    border: 2px solid #130106;
+    border-radius: 250px;
+    color: white;
+    font-family: serif;
+    display: block;
+    font-size: 18px;
+    letter-spacing: 1px;
+    margin: 20px auto;
+    height: 40px;
+    width: 20%;
+
+}
+
+.footerLeftSide{
+    margin:0;
+    position: absolute;
+    float:left;
+   
+}
+
+.footerLeftSide img{
+    margin-top:60px;
+    padding-left:60px;
+}
+
+.footerLeftSide h3{
+    margin-top:59px;
+    padding-left:80px;
+}
+
+.contactinfo{
+    margin: 0;
+    background-color: black;
+    height: 400px;
+    width: 100%;
+    position:relative;
+}
+
+.contactinfo1, .contactinfo2, .contactinfo3, .contactinfo4{
+    float:left;
+    height: 400px;
+    width: 18%;
+    position:relative;
+    padding-top: 50px;
+}
+
+.contactinfo5 {
+    float:left;
+    height:400px;
+    width:28%;
+    position:relative;
+    padding-top: 50px;
+}
+
+.sociallogo{
+    padding: 0;
+    height: 50px;
+    width:65px;
+    float: left;
+    margin:0;
+    position: relative;
+}
+
+.leftSide:hover{
+    cursor:pointer;
+}
+
+button:hover{
+    cursor:pointer;
+}

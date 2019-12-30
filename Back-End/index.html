@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Simple Multer Upload Example</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <form action="http://localhost:3005/tracks" enctype="multipart/form-data" method="post">
+        <label for="name">Songname</label>
+        <input type="text" id="name" name="name">
+        <br/><br/>
+        <label for="name">Artist</label>
+        <input type="text" id="artist" name="artist">
+        <br/><br/>
+        <label for="name">Album</label>
+        <input type="text" id="album" name="album">
+        <br/><br/>
+        <label for="name">Genre</label>
+        <input type="text" id="genre" name="genre">
+        <br/><br/>
+        <label for="name">Language</label>
+        <input type="text" id="language" name="language">
+        <br/><br/>
+        <label for="track">Upload Song</label>
+        <input type="file" id="track" name="track">
+        <br/><br/>
+        <label for="image">Image</label>
+        <input type="file" id="image" name="image">
+        <br/><br/>
+        <input type="submit" value="Upload">
+    </form>  
+  </body>
+</html>

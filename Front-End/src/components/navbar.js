@@ -27,19 +27,23 @@ export class Navbar extends Component {
                         <div className="group">
                             
                             <div className="navItem">
-                                <Link to="browse" className="navItemLink">Browse</Link>
+                                <span className="navItemLink" onClick={()=>this.props.changeURL()}>Browse</span>
                             </div>
                             
                             <div className="navItem">
-                                <Link to="yourMusic" className="navItemLink">Your Music</Link>
+                                <Link to="yourMusic" ><span onClick={()=>this.props.stopIt()} className="navItemLink">Your Music</span></Link>
                             </div>
                             
                             <div className="navItem">
-                                <Link to="profile" className="navItemLink">Mohit Relaha</Link>
+                                <Link to="profile" ><span onClick={()=>this.props.stopIt()} className="navItemLink">Mohit Relaha</span></Link>
                             </div>
                             
                             <div className="navItem">
-                                <Link to="dashboard/addSongs" className="navItemLink">Add Songs</Link>
+                                <Link to="dashboard/addSongs" ><span onClick={()=>this.props.stopIt()} className="navItemLink">Add Songs</span></Link>
+                            </div>
+
+                            <div className="navItem">
+                                <Link to="dashboard/addArtist" ><span onClick={()=>this.props.stopIt()} className="navItemLink">Add Artist</span></Link>
                             </div>
                         </div>
                         

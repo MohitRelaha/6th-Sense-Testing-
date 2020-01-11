@@ -24,7 +24,9 @@ class Main extends Component {
             audioContext:null,
             duration:0,
             mouseDown:false,
-            gainNode:null
+            gainNode:null,
+            currentURL:"allSongs",
+            artistSelected:null
             
         }
         this.play = this.play.bind(this)
@@ -35,11 +37,15 @@ class Main extends Component {
         this.manualProgress = this.manualProgress.bind(this)
         this.setVolume = this.setVolume.bind(this)
         this.volumeBarProgress = this.volumeBarProgress.bind(this)
+        this.artistBrowsed = this.artistBrowsed.bind(this)
+        this.changeURL = this.changeURL.bind(this)
+        this.stopIt = this.stopIt.bind(this)
     }
 
 
     componentDidMount(){
         $(document).ready(function(){
+            // taaki wo select na ho icons
             $("#nowPlayingContainer").on("mousedown touchstart mousemove touchmove", function(e){
                 e.preventDefault()
             })
@@ -47,6 +53,34 @@ class Main extends Component {
         })
     }
 
+    stopIt(){
+        if(this.state.source !== null && this.state.nowPlaying === true)
+        {
+            this.state.source.disconnect();
+            this.state.source.stop(0);
+            this.state.source = null;
+
+            this.state.nowPlaying = false;
+        }
+    }
+
+
+    changeURL(){
+        this.stopIt()
+        
+        this.setState({
+            currentURL:"browse"
+        })
+        
+    }
+
+
+    artistBrowsed(artistSelected){
+        this.setState({
+            currentURL:"allSongs",
+            artistSelected:artistSelected
+        })
+    }
 
     volumeBarProgress(){
         let prog = this.state.gainNode.gain.value * 100
@@ -109,11 +143,11 @@ class Main extends Component {
     formatTime(seconds) {
         var time = Math.round(seconds)
         var minutes = Math.floor(time/60)
-        var seconds = time - minutes*60
+        var sec = time - minutes*60
 
-        var extraZero = (seconds < 10) ? "0" : ""
+        var extraZero = (sec < 10) ? "0" : ""
 
-        return minutes + ":" + extraZero + seconds
+        return minutes + ":" + extraZero + sec
     }
 
 
@@ -126,7 +160,7 @@ class Main extends Component {
 
         if(this.state.currentSongId !== id){
 
-            await fetch(`http://localhost:3005/artist/${id}`)
+            await fetch(`http://localhost:3005/tracks/songInfo/${id}`)
             .then(res => res.json())   // return json format : actual data is always in form of string
             .then(res => {
                 this.setState({
@@ -193,9 +227,6 @@ class Main extends Component {
 
             this.state.duration = audioBuffer.duration
             var songDuration = this.formatTime(audioBuffer.duration)
-            $(".progressTime.remaining").text(songDuration)
-
-
             
 
             // play audio
@@ -208,6 +239,8 @@ class Main extends Component {
             }
             else
             {
+                $(".progressTime.remaining").text(songDuration)
+
                 this.state.startedAt = Date.now()
                 this.state.pausedAt = null
 
@@ -383,10 +416,11 @@ class Main extends Component {
         return (
             <div id="mainContainer"> 
                 <div id="topContainer">
-                    <NavBar/>
-                    <Display arr={this.props.arr} play={this.play} pause={this.pause} stop={this.stop}/>
+                    <NavBar changeURL={this.changeURL} stopIt={this.stopIt} />
+                    {this.state.currentURL === 'allSongs' && <Display arr={this.props.arr} play={this.play} pause={this.pause} stop={this.stop} currentURL={this.state.currentURL} artistSelected={this.state.artistSelected}/>}
+                    {this.state.currentURL === 'browse' && <Display arr={this.props.arr} artistArr={this.props.artistArr} currentURL={this.state.currentURL} artistBrowsed={this.artistBrowsed}/>}
                 </div>
-                <NowPlaying id={this.state.currentSongId} songName={this.state.currentSongName} artist={this.state.currentSongArtist} play={this.play} pause={this.pause} stop={this.stop} setVolume={this.setVolume}/> 
+                {this.state.currentURL === 'allSongs' && <NowPlaying id={this.state.currentSongId} songName={this.state.currentSongName} artist={this.state.currentSongArtist} play={this.play} pause={this.pause} stop={this.stop} setVolume={this.setVolume}/> }      
             </div>
         )
     }

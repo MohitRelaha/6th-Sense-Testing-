@@ -4,15 +4,30 @@ export class AllSongs extends Component {
 
 
     render() {
+
+
+        let arr = this.props.arr
+
+        if(this.props.artistSelected !== null)
+        {    
+            console.log("aagya",this.props.artistSelected )
+            arr = arr.filter((song)=>{
+                console.log(song.metadata.artist)
+                return this.props.artistSelected === song.metadata.artist
+            })
+        }
+
+                        
         return (
             <div className="gridViewContainer">
                 
-                    {
-                        this.props.arr.map((s,index)=>{
+                    {   
+                        
+                        arr.map((s,index)=>{
                         return <div className="gridViewItem" key={index} > 
                             <br/>
                             <div className="gridViewItem"  style={{color:"white"}}>
-                                <img src={`http://localhost:3005/images/${s._id}`} onClick={()=>this.props.play(s._id)} alt={s.filename}/>
+                                <img src={`http://localhost:3005/tracks/images/${s._id}`} onClick={()=>this.props.play(s._id)} alt={s.filename}/>
                                 
                                 <div className="gridViewInfo" >
                                     <span onClick={()=>this.props.play(s._id)}>{s.filename}</span> <br/>
@@ -33,6 +48,7 @@ export class AllSongs extends Component {
 }
 
 export default AllSongs
+
 
 
 /*

@@ -13,7 +13,7 @@ export class NowPlaying extends Component {
                         <div className="content">
 
                             <span className="albumLink">
-                                <img src={`http://localhost:3005/images/${this.props.id}`} className="albumArtwork"/>
+                                <img src={`http://localhost:3005/tracks/images/${this.props.id}`} className="albumArtwork"/>
                             </span>
 
 

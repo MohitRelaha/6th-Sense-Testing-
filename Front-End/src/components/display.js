@@ -3,21 +3,17 @@ import {Link,Route} from 'react-router-dom'
 import './styledash.css'
 import AllSongs from './allsongs'
 import Browse from './browse'
+import AllArtists from './allArtists'
 
 export class Display extends Component {
-    constructor(props){
-        super(props)
-        this.state = {
-            currentURL : 'allSongs'
-        }
-    }
+
     render() {
         return (
             
                 <div id="displayPartContainer">
                     <div id="displayPart">
-                        {this.state.currentURL === 'allSongs' && <AllSongs arr={this.props.arr} play={this.props.play} pause={this.props.pause} stop={this.props.stop}/>}
-                        {this.state.currentURL === 'browse' && <Browse arr={this.props.arr}/>}    
+                        {this.props.currentURL === 'allSongs' && <AllSongs arr={this.props.arr} play={this.props.play} pause={this.props.pause} stop={this.props.stop} artistSelected={this.props.artistSelected}/>}
+                        {this.props.currentURL === 'browse' && <AllArtists arr={this.props.arr} artistArr={this.props.artistArr} artistBrowsed={this.props.artistBrowsed} />}    
                     </div>
                 </div>
              

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import {Link} from 'react-router-dom'
+import {Redirect} from 'react-router-dom'
 import './stylelogin.css'
 
 class Login extends Component {
@@ -7,7 +8,8 @@ class Login extends Component {
     constructor(){
         super();
         this.state = {
-            userId:0
+            userId:0,
+            redirectIt:false
         }
         this.login=this.login.bind(this);
     }
@@ -31,7 +33,10 @@ class Login extends Component {
         })
         .then( res => {
             if(res.ok){
-                window.location.assign("http://localhost:3000/dashboard")
+                //window.location.assign("/dashboard")
+                this.setState({
+                    redirectIt:true
+                })
             }
                 
             else
@@ -48,6 +53,10 @@ class Login extends Component {
 
 
     render() {
+
+        if(this.state.redirectIt)
+            return <Redirect to='/dashboard'/>
+        else
         return (
             <div>
                 <div id="loginContainer">

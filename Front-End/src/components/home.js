@@ -30,13 +30,13 @@ class Home extends Component {
 
                             <li className="rightSide">
                             <div class="links">
-                                <Link to="////">Help</Link>
+                                <Link to='/noService'>Help</Link>
                             </div>
                             </li>
 
                             <li className="rightSide">
                             <div class="links">
-                                <Link to="////">Premium</Link>
+                                <Link to="/premium">Premium</Link>
                             </div>
                             </li>
 
@@ -66,19 +66,19 @@ class Home extends Component {
                             <li className="heading">COMPANY</li>
                             <li className="heading">
                                 <div class="links">
-                                    <Link to="////">About</Link>
+                                    <Link to="/about">About</Link>
                                 </div>
                             </li>
 
                             <li className="heading">
                                 <div class="links">
-                                    <Link to="////">Jobs</Link>
+                                    <Link to='/noService'>Jobs</Link>
                                 </div>
                             </li>
 
                             <li className="heading">
                                 <div class="links">
-                                    <Link to="////">For the Record</Link>
+                                    <Link to='/noService'>For the Record</Link>
                                 </div>
                             </li>
                         </ul>
@@ -90,19 +90,19 @@ class Home extends Component {
                             <li className="heading">COMMUNITIES</li>
                             <li className="heading">
                                 <div class="links">
-                                    <Link to="////">For Artist</Link>
+                                    <Link to='/noService'>For Artist</Link>
                                 </div>
                             </li>
 
                             <li className="heading">
                                 <div class="links">
-                                    <Link to="////">Developers</Link>
+                                    <Link to='/noService'>Developers</Link>
                                 </div>
                             </li>
 
                             <li className="heading">
                                 <div class="links">
-                                    <Link to="////">Brands</Link>
+                                    <Link to='/noService'>Brands</Link>
                                 </div>
                             </li>
 
@@ -115,19 +115,19 @@ class Home extends Component {
                             <li className="heading">USEFUL LINKS</li>
                             <li className="heading">
                                 <div class="links">
-                                    <Link to="////">Help</Link>
+                                    <Link to='/noService'>Help</Link>
                                 </div>
                             </li>
 
                             <li className="heading">
                                 <div class="links">
-                                    <Link to="////">Web Player</Link>
+                                    <Link to='/noService'>Web Player</Link>
                                 </div>
                             </li>
 
                             <li className="heading">
                                 <div class="links">
-                                    <Link to="////">Free Web App</Link>
+                                    <Link to='/noService'>Free Web App</Link>
                                 </div>
                             </li>
 

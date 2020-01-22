@@ -1,42 +1,44 @@
 import React, { Component } from 'react'
-import './stylelogin.css'
+import './styledash.css'
 
 class AddSongs extends Component {
 
     render() {
         return (
-            <div>
-                <form action="http://localhost:3005/tracks" enctype="multipart/form-data" method="post">
-                    <label for="name" style={{color:"black"}}>Songname</label>
-                    <input type="text" id="name" name="name" style={{color:"black"}} />
-                    <br/><br/>
+            <div class="form-container">
+                <div class="form-body">
+                    <form action="http://localhost:3005/tracks" enctype="multipart/form-data" method="post">
+                        <label for="name">Songname</label>
+                        <input type="text" id="name" name="name" required/>
+                        <br/><br/>
 
-                    <label for="name" style={{color:"black"}}>Artist</label>
-                    <input type="text" id="artist" name="artist" style={{color:"black"}} />
-                    <br/><br/>
+                        <label for="name">Artist</label>
+                        <input type="text" id="artist" name="artist" required/>
+                        <br/><br/>
 
-                    <label for="name" style={{color:"black"}}>Album</label>
-                    <input type="text" id="album" name="album" style={{color:"black"}} />
-                    <br/><br/>
+                        <label for="name">Album</label>
+                        <input type="text" id="album" name="album" required/>
+                        <br/><br/>
 
-                    <label for="name" style={{color:"black"}}>Genre</label>
-                    <input type="text" id="genre" name="genre" style={{color:"black"}} />
-                    <br/><br/>
+                        <label for="name">Genre</label>
+                        <input type="text" id="genre" name="genre" required/>
+                        <br/><br/>
 
-                    <label for="name" style={{color:"black"}}>Language</label>
-                    <input type="text" id="language" name="language" style={{color:"black"}} />
-                    <br/><br/>
+                        <label for="name">Language</label>
+                        <input type="text" id="language" name="language" required/>
+                        <br/><br/>
 
-                    <label for="track" style={{color:"black"}}>Upload Song</label>
-                    <input type="file" id="track" name="track" style={{color:"black"}}/>
-                    <br/><br/>
+                        <label for="track">Upload Song</label>
+                        <input type="file" id="track" name="track" required/>
+                        <br/><br/>
 
-                    <label for="track" style={{color:"black"}}>Image</label>
-                    <input type="file" id="image" name="image" style={{color:"black"}}/>
-                    <br/><br/>
+                        <label for="track">Image</label>
+                        <input type="file" id="image" name="image" required/>
+                        <br/><br/>
 
-                    <input type="submit" value="Upload" style={{color:"black"}} />
-                </form>  
+                        <input class="upload-button" type="submit" value="Upload" />
+                    </form>  
+                </div>
             </div>
         )
     }

@@ -2,16 +2,6 @@ const express = require('express');
 const router = express.Router();
 const User = require('./../models/users');
 
-router.use("*",(req,res,next)=>{
-    console.log("Middle ware is called");
-    res.setHeader('Access-Control-Allow-Origin',"*");
-    res.setHeader("Access-Control-Allow-Headers","Content-Type,Access-Control-Allow-Headers,Authorization,X-Requested-With,Accept");
-    res.setHeader("Access-Control-Allow-Methods","*");
-    res.setHeader("Access-Control-Allow-Credentials","true");
-    //console.log(req.session);
-    const {UserID} = req.session;
-    next();
-})
 
 
 router.post('/signup',(req,res)=>{
@@ -24,6 +14,7 @@ router.post('/signup',(req,res)=>{
         }
         if(response)
         {
+            //req.session.username = response.username
             console.log('successful: ',response,' added.');
             res.send(response);
         }
@@ -32,37 +23,25 @@ router.post('/signup',(req,res)=>{
 
 
 router.post('/login',(req,res)=>{
-    console.log(req.session.UserID);
-    console.log("here in login")
-    if(!req.session.UserID)
-    {
-        User.authenticate(req,(error,response)=>{
-            if(response==null){
-                console.log('login denied');
-                res.status(404).end();
+    
+    User.findUserForLogin(req,(error,response)=>{
+        if(error) {
+            console.log('Error Occurred');
+            res.status(400).send(error);
+        }
+        if (response) { 
+            if (response!=null) {
+                req.session.username = response.username;
+                console.log("Success response is: ",JSON.stringify(response));
+                res.status(200).send(response);
+            } else {
+                return res.status(404).send();
             }
-            
-            if(response){
-                console.log('login successful');
-                console.log(response._id);
+        }
 
-                 req.session.UserId = response._id;
-                 console.log(req.session.UserId);
-                 console.log(req.session);
-                //res.redirect(`http://localhost:3000/welcome`);
-                //var auth = {"access" : "true"}
-                
-                res.send(response);
-            
-            }
-            
-        })
-    }
-    else {
-        //res.redirect(`/welcome`);
-        console.log('already logged in');
-    }
+    })
 })
+
 
 
 router.get('/logout', (req,res,next)=>{

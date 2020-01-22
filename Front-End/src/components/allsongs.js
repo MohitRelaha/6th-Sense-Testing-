@@ -16,6 +16,14 @@ export class AllSongs extends Component {
                 return this.props.artistSelected === song.metadata.artist
             })
         }
+        else if(this.props.langSelected !== null)
+        {    
+            console.log("aagyi language",this.props.langSelected )
+            arr = arr.filter((song)=>{
+                console.log(song.metadata.artist)
+                return this.props.langSelected === song.metadata.language
+            })
+        }
 
                         
         return (

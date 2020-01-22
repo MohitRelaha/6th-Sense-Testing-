@@ -53,6 +53,22 @@ var User = mongoose.model('User', UserSchema);
   })
 });*/
 
+
+User.findUsers = function (req,callBack) {
+  //console.log('model was called');
+  var uname=req.session.username;
+  let query={};
+  if(uname)
+  {
+      query = { username : uname}
+  }
+  User.find(query, callBack);  //call find function of mongoose.
+
+}
+
+
+
+
 User.addUsers = function(req,callBack) {
     let user=req.body;
     console.log(user);
@@ -66,10 +82,9 @@ User.addUsers = function(req,callBack) {
          
 }
 
-User.authenticate = function(req,callBack) {
+User.findUserForLogin = function(req,callBack){
   User.findOne({username: req.body.username})
   .exec(function(err,user){
-    //console.log(user);
     if(err){
       console.log('error');
       return callBack(err,null)
@@ -78,21 +93,14 @@ User.authenticate = function(req,callBack) {
       console.log('user not found');
       return callBack(err,null);
     }
-    console.log(req.body.password);
-    /*if(req.body.password === user.password)
-       callBack(err,user);
-    else
-       callBack(err,null);*/
-    bcrypt.compare(req.body.password, user.password).then((res) => {
-    // res === true
-    if(res === true)
-      callBack(err,user);
-    else
-      callBack(err,null);
+       bcrypt.compare(req.body.password, user.password).then((res) => {
+        // res === true
+        if(res === true)
+        callBack(err,user);
+        else
+        callBack(err,null);
     });
-       
-
-  })
+ })
 }
 
 

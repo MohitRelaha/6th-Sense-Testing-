@@ -1,18 +1,76 @@
 const express = require('express');
-const trackRoute = express.Router();
-const multer = require('multer');
-
-const mongodb = require('mongodb');
-const MongoClient = require('mongodb').MongoClient;
-const ObjectID = require('mongodb').ObjectID;
 
 const bodyParser= require("body-parser");
 
 const app = express();
+var path = require('path');
+var user = require('./routes/users');
+var trackRoute = require('./routes/tracks');
+require('./dbConnectionUsers')
+var session = require('express-session');
+
+const User = require('./models/users')
+
+var cookieValidator = (req, res, next) => {
+  if (req.session.username) {
+      User.findUsers(req, (err, res) => {
+          if (err) res.status(401).send({message:"User not authenticated"});
+          if (res && res.length == 0) {
+              res.status(401).send({message:"User not authenticated"});
+          }
+          if (res && res.length > 0) {
+              next();
+          }
+      })
+  } else {
+      res.status(401).send({message:"User not authenticated"});
+  }
+}
+
 
 app.use(bodyParser.json());
 
-const { Readable } = require('stream');
+
+
+
+app.use(session({
+  name: 'sid',
+  resave: false,
+  saveUninitialized: false,
+  secret: 'secret message',
+  cookie: {
+      maxAge: 3600000
+  },
+  key:"sixthsense"
+}))
+
+//Use this
+//app.use("/",express.static('public'))
+
+
+//app.use('/', express.static('public'));
+// app.use("/dashboard",express.static('public'))
+// app.use("/login",express.static('public'))
+//app.use(express.static('public'))
+//app.use(express.static(__dirname + '/public'));
+//app.use(express.static(path.join(__dirname, 'public')));
+//  app.use('/img',express.static(path.join(__dirname, 'public/images')));
+//  app.use('/js',express.static(path.join(__dirname, 'public/javascripts')));
+//  app.use('/css',express.static(path.join(__dirname, 'public/stylesheets')));
+//"C:\WEB\With Routes 6th Sense\6thsense"
+
+// app.use(express.static(path.join(__dirname, 'public')));
+// -app.get('/', function (req, res) {
+// +app.get('/*', function (req, res) {
+//    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+//  });
+
+// app.use('public', express.static(path.join(__dirname, 'build')));
+// app.use('public', express.static(path.join(__dirname, 'public')));
+// app.use("/",express.static('public'))
+// // Always return the main index.html
+
+
 
 
 
@@ -26,249 +84,19 @@ app.use("*",(req,res,next)=>{
   next();
 })
 
+
 app.set('view engine' , 'ejs');
 
-let db;
-MongoClient.connect('mongodb://localhost/testingDB', (err, database) => {
-  if (err) {
-    console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
-    process.exit(1);
-  }
-  db = database;
-});
 
 
 
 
-app.use('/tracks', trackRoute);
-
-
-trackRoute.get('/:trackID', (req, res) => {
-  try {
-    var trackID = new ObjectID(req.params.trackID);
-  } catch(err) {
-    return res.status(400).json({ message: "Invalid trackID in URL parameter. Must be a single String of 12 bytes or a string of 24 hex characters" }); 
-  }
-  res.set('content-type', 'audio/mp3');
-  res.set('accept-ranges', 'bytes');
-
-  let bucket = new mongodb.GridFSBucket(db, {
-    bucketName: 'tracks'
-  });
-
-  //Returns a readable stream (GridFSBucketReadStream) for streaming file data from GridFS
-  let downloadStream = bucket.openDownloadStream(trackID);
-
-  downloadStream.on('data', (chunk) => {
-    res.write(chunk);
-  });
-
-  downloadStream.on('error', () => {
-    res.sendStatus(404);
-  });
-
-  downloadStream.on('end', () => {
-    //console.log('bye')
-    res.end();
-  });
-});
-
-
-app.route('/images/:trackID').get(function(req, res) {
-    try {
-      var trackID = new ObjectID(req.params.trackID);
-    } catch(err) {
-      return res.status(400).json({ message: "Invalid trackID in URL parameter. Must be a single String of 12 bytes or a string of 24 hex characters" }); 
-    }
-    res.set('content-type', 'image/jpeg');
-    res.set('accept-ranges', 'bytes');
-  
-    let bucket = new mongodb.GridFSBucket(db, {
-      bucketName: 'images'
-    });
-  
-    //Returns a readable stream (GridFSBucketReadStream) for streaming file data from GridFS
-    let downloadStream = bucket.openDownloadStream(trackID);
-  
-    downloadStream.on('data', (chunk) => {
-      res.write(chunk);
-    });
-  
-    downloadStream.on('error', () => {
-      res.sendStatus(404);
-    });
-  
-    downloadStream.on('end', () => {
-      //console.log('bye')
-      res.end();
-    });
-  });
-
-
-
-
-
-
-
-app.route('/metadata').get(function(req, res) {
-  
-  var collection = db.collection('images.files');
-  var cursor = collection.find({});
-
-  var arr = [];
-
-  cursor.forEach(function(item) {
-      if (item != null) {
-          // link = item._id;
-          // str = str + "    Song Name  " + item._id + "</br>";
-          arr.push(item);
-          console.log(item);
-
-      }
-  }, function(err) {
-      //res.send(str);
-      console.log(arr)
-     // res.render('songs',{arr:arr})
-    
-     res.send(arr);
-     // db.close();
-    }
-  );
-
-});
-
-
-app.route('/artist/:trackID').get(function(req, res) {
-  
-  var collection = db.collection('images.files');
-  collection.findOne({"_id": new ObjectID(req.params.trackID)},function(err,result){
-    res.send(result);
-  });
-
-  
-
-});
-
-
-
-trackRoute.post('/', (req, res) => {
-  const storage = multer.memoryStorage()
-  const upload = multer({ storage: storage, limits: { fields: 5, fileSize: 6000000, files: 2, parts: 7 }});
-
-
-  /*
-  upload.single('track')(req, res, (err) => {
-    if (err) {
-      return res.status(400).json({ message: "Upload Request Validation Failed" });
-    } else if(!req.body.name) {
-      return res.status(400).json({ message: "No track name in request body" });
-    }
-    
-
-
-    
-    
-    */
-
-    
-
-   upload.fields([{
-    name: 'track'
-  }, {
-    name: 'image'
-  }])(req, res, (err) => {
-    if (err) {
-      return res.status(400).json({ message: "Upload Request Validation Failed" });
-    } else if(!req.body.name) {
-      return res.status(400).json({ message: "No track name in request body" });
-    }
-
-
-    //console.log(JSON. stringify(req.body.name))
-    
-    //console.log(req.files)
-
-    //console.log(req)
-    //console.log(req.body)
-    //console.log(JSON. stringify(req.body))
-
-    let metadata = {
-      songname: req.body.name,
-      artist: req.body.artist,
-      album: req.body.album,
-      genre : req.body.genre,
-      language : req.body.language
-    }
-
-
-    let trackName = req.body.name;
-    
-    // Covert buffer to Readable Stream
-    
-    const readableTrackStream = new Readable();
-    readableTrackStream.push(req.files.track[0].buffer);
-    readableTrackStream.push(null);
-
-    
-
-
-
-    let bucket = new mongodb.GridFSBucket(db, {
-      bucketName: 'tracks'   //The 'files' and 'chunks' collections will be prefixed with the bucket name followed by a dot.
-    });
-
-    
-    
-    //Returns a writable stream (GridFSBucketWriteStream) for writing buffers to GridFS
-    let uploadStream = bucket.openUploadStream(trackName);
-    let id = uploadStream.id;
-    readableTrackStream.pipe(uploadStream);
-
-    uploadStream.on('error', () => {
-      return res.status(500).json({ message: "Error uploading file" });
-    });
-
-    uploadStream.on('finish', () => {
-      //console.log(uploadStream)
-      //uploadStream.metadata = metadata
-
-        const imgreadableTrackStream = new Readable();
-        imgreadableTrackStream.push(req.files.image[0].buffer);
-        imgreadableTrackStream.push(null);
-
-        let imgbucket = new mongodb.GridFSBucket(db, {
-            bucketName: 'images'   //The 'files' and 'chunks' collections will be prefixed with the bucket name followed by a dot.
-          });
-
-        let imguploadStream = imgbucket.openUploadStreamWithId(id, trackName,{metadata :{songname: req.body.name,
-          artist: req.body.artist,
-          album: req.body.album,
-          genre : req.body.genre,
-          language : req.body.language}})
-
-            
-        imgreadableTrackStream.pipe(imguploadStream)
-
-        imguploadStream.on('error', () => {
-            return res.status(500).json({ message: "Error uploading file" });
-          });
-
-          imguploadStream.on('finish', () => {
-            
-          
-            return res.status(201).json({ message: "Both File uploaded successfully, stored under Mongo ObjectID: " + id });
-          })
-          
-         
-         
-    });
-
-  });
-
-});
-
+app.use('/users',user);
+//app.use('/tracks',cookieValidator ,trackRoute);
+app.use('/tracks' ,trackRoute);
 
 
 app.listen(3005, () => {
   console.log("App listening on port 3005!");
 });
+

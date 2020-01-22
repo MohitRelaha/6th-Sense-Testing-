@@ -6,8 +6,9 @@ import Display from './display.js'
 import './styledash.css'
 import $ from "jquery"
 import {Link,Route} from 'react-router-dom'
+import {withRouter} from 'react-router';
 
-class Main extends Component {
+class Dashboard extends Component {
 
     constructor(){
         super()
@@ -25,8 +26,10 @@ class Main extends Component {
             duration:0,
             mouseDown:false,
             gainNode:null,
-            currentURL:"allSongs",
-            artistSelected:null
+            currentURL:"none",
+            artistSelected:null,
+            arr:[],
+            artistArr:[]
             
         }
         this.play = this.play.bind(this)
@@ -37,13 +40,38 @@ class Main extends Component {
         this.manualProgress = this.manualProgress.bind(this)
         this.setVolume = this.setVolume.bind(this)
         this.volumeBarProgress = this.volumeBarProgress.bind(this)
-        this.artistBrowsed = this.artistBrowsed.bind(this)
+        //this.artistBrowsed = this.artistBrowsed.bind(this)
         this.changeURL = this.changeURL.bind(this)
         this.stopIt = this.stopIt.bind(this)
     }
 
 
     componentDidMount(){
+        
+        /*
+        let self = this
+        $(window).off('popstate.duck').on('popstate.duck', function(event) {   
+            alert("going back") 
+            self.stopIt()
+           });
+        */
+
+       fetch('http://localhost:3005/tracks/metadata')
+       .then(res => res.json())   // return json format : actual data is always in form of string
+       .then(res => {
+         this.setState({arr : res})
+         console.log('arr = ' + this.state.arr)
+         //console.log('HOW MANY TIME')
+       })
+
+        fetch('http://localhost:3005/tracks/artist')
+        .then(res => res.json())   // return json format : actual data is always in form of string
+        .then(res => {
+            this.setState({artistArr : res})
+            console.log('ArtistArr = ' + this.state.artistArr)
+        })
+
+
         $(document).ready(function(){
             // taaki wo select na ho icons
             $("#nowPlayingContainer").on("mousedown touchstart mousemove touchmove", function(e){
@@ -51,7 +79,20 @@ class Main extends Component {
             })
             
         })
+       
+            
     }
+
+
+    componentDidUpdate(){
+        window.onpopstate  = (e) => {
+            this.stopIt()
+          }
+        }
+
+
+
+
 
     stopIt(){
         if(this.state.source !== null && this.state.nowPlaying === true)
@@ -65,6 +106,8 @@ class Main extends Component {
     }
 
 
+    
+
     changeURL(){
         this.stopIt()
         
@@ -75,12 +118,12 @@ class Main extends Component {
     }
 
 
-    artistBrowsed(artistSelected){
-        this.setState({
-            currentURL:"allSongs",
-            artistSelected:artistSelected
-        })
-    }
+    // artistBrowsed(artistSelected){
+    //     this.setState({
+    //         currentURL:"allSongs",
+    //         artistSelected:artistSelected
+    //     })
+    // }
 
     volumeBarProgress(){
         let prog = this.state.gainNode.gain.value * 100
@@ -411,19 +454,85 @@ class Main extends Component {
 
 
 
+    // render() {
+    //     return (
+    //         <div id="mainContainer"> 
+    //             <div id="topContainer">
+    //                 <NavBar changeURL={this.changeURL} stopIt={this.stopIt} />
+    //                 {this.state.currentURL === 'allSongs' && <Display arr={this.state.arr} play={this.play} pause={this.pause} stop={this.stop} currentURL={this.state.currentURL} artistSelected={this.state.artistSelected}/>}
+    //                 {this.props.requestedURL === 'browse' && <Display arr={this.state.arr} artistArr={this.state.artistArr} currentURL="browse" artistBrowsed={this.artistBrowsed}/>}
+    //             </div>
+    //             {this.state.currentURL === 'allSongs' && <NowPlaying id={this.state.currentSongId} songName={this.state.currentSongName} artist={this.state.currentSongArtist} play={this.play} pause={this.pause} stop={this.stop} setVolume={this.setVolume}/> }      
+    //         </div>
+    //     )
+    // }
 
-    render() {
-        return (
-            <div id="mainContainer"> 
-                <div id="topContainer">
-                    <NavBar changeURL={this.changeURL} stopIt={this.stopIt} />
-                    {this.state.currentURL === 'allSongs' && <Display arr={this.props.arr} play={this.play} pause={this.pause} stop={this.stop} currentURL={this.state.currentURL} artistSelected={this.state.artistSelected}/>}
-                    {this.state.currentURL === 'browse' && <Display arr={this.props.arr} artistArr={this.props.artistArr} currentURL={this.state.currentURL} artistBrowsed={this.artistBrowsed}/>}
+
+    render(){
+        if(this.state.currentURL === 'allSongs' || this.props.requestedURL === 'allSongs')
+        {
+            return(
+                <div id="mainContainer"> 
+                    <div id="topContainer">
+                        <NavBar changeURL={this.changeURL} stopIt={this.stopIt} />
+                        <Display arr={this.state.arr} play={this.play} pause={this.pause} stop={this.stop} currentURL="allSongs" artistSelected={this.state.artistSelected} langSelected={null}/>
+                    </div>
+                    <NowPlaying id={this.state.currentSongId} songName={this.state.currentSongName} artist={this.state.currentSongArtist} play={this.play} pause={this.pause} stop={this.stop} setVolume={this.setVolume}/>   
                 </div>
-                {this.state.currentURL === 'allSongs' && <NowPlaying id={this.state.currentSongId} songName={this.state.currentSongName} artist={this.state.currentSongArtist} play={this.play} pause={this.pause} stop={this.stop} setVolume={this.setVolume}/> }      
-            </div>
-        )
+            )
+        }
+        else if(this.state.currentURL === 'none' && this.props.requestedURL === 'browse')
+        {
+            return(
+                <div id="mainContainer"> 
+                    <div id="topContainer">
+                        <NavBar changeURL={this.changeURL} stopIt={this.stopIt} />
+                        <Display arr={this.state.arr} artistArr={this.state.artistArr} currentURL="browse" stopIt={this.stopIt}/>
+                    </div>
+                </div>
+            )
+        }
+        else if(this.props.requestedURL === 'artist')
+        {
+            return(
+                <div id="mainContainer"> 
+                    <div id="topContainer">
+                        <NavBar changeURL={this.changeURL} stopIt={this.stopIt} />
+                        <Display arr={this.state.arr} play={this.play} pause={this.pause} stop={this.stop} currentURL="allSongs" artistSelected={this.props.location.state.artistSelected} langSelected={null}/>
+                    </div>
+                    <NowPlaying id={this.state.currentSongId} songName={this.state.currentSongName} artist={this.state.currentSongArtist} play={this.play} pause={this.pause} stop={this.stop} setVolume={this.setVolume}/>   
+                </div>
+            )
+        }
+        else if(this.props.requestedURL === 'language')
+        {
+            return(
+                <div id="mainContainer"> 
+                    <div id="topContainer">
+                        <NavBar changeURL={this.changeURL} stopIt={this.stopIt} />
+                        <Display arr={this.state.arr} play={this.play} pause={this.pause} stop={this.stop} currentURL="allSongs" artistSelected={this.state.artistSelected} langSelected={this.props.location.state.langSelected}/>
+                    </div>
+                    <NowPlaying id={this.state.currentSongId} songName={this.state.currentSongName} artist={this.state.currentSongArtist} play={this.play} pause={this.pause} stop={this.stop} setVolume={this.setVolume}/>   
+                </div>
+            )
+        }
+        else if(this.props.requestedURL === 'search')
+        {
+            return(
+                <div id="mainContainer"> 
+                    <div id="topContainer">
+                        <NavBar changeURL={this.changeURL} stopIt={this.stopIt} />
+                        <Display arr={this.state.arr} artistArr={this.state.artistArr} play={this.play} pause={this.pause} stop={this.stop} currentURL="search" artistSelected={this.state.artistSelected} langSelected={null} stopIt={this.stopIt}/>
+                    </div>
+                    <NowPlaying id={this.state.currentSongId} songName={this.state.currentSongName} artist={this.state.currentSongArtist} play={this.play} pause={this.pause} stop={this.stop} setVolume={this.setVolume}/>   
+                </div>
+            )
+        }
     }
+
+
+
+
 }
 
-export default Main
+export default Dashboard
